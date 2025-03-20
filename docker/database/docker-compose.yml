@@ -1,0 +1,22 @@
+services:
+  flyway:
+    container_name: flyway
+    image: flyway/flyway:10.13.0
+    command: -configFiles=/flyway/flyway.conf -locations=filesystem:/flyway/sql -connectRetries=60 migrate
+    volumes:
+      - ../../ddl-scripts:/flyway/sql
+      - ./flyway-docker.conf:/flyway/flyway.conf
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15.0
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database-init:/docker-entrypoint-initdb.d
+    environment:
+      - POSTGRES_USER=nextjs
+      - POSTGRES_PASSWORD=nextjs
+      - POSTGRES_DB=nextjs
+      - POSTGRES_SCHEMA=nextjs
