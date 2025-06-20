@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Dockerized REST API
+
+This project provides a Next.js REST API for CRUD operations on users and roles, backed by a PostgreSQL database running in Docker. It includes robust integration tests using Jest, with automatic startup and teardown of test dependencies.
+
+## Prerequisites
+- Docker and Docker Compose (v2+)
+- Node.js (v18+ recommended)
+- npm
 
 ## Getting Started
 
-First, run the development server:
+### 1. Start the Database
+Start the PostgreSQL and Flyway migration containers:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+docker compose -f docker/database/docker-compose.yml up -d
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This will:
+- Start a PostgreSQL database on port 5432
+- Run Flyway migrations to set up the schema and seed data
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### 2. Run the Next.js App
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Install dependencies and start the development server:
 
-## Learn More
+```bash
+npm install
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+The app will be available at http://localhost:3000
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. API Endpoints
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `GET    /api/users`         — List all users
+- `POST   /api/users`         — Create a new user
+- `GET    /api/users/[id]`    — Get user by ID
+- `PUT    /api/users/[id]`    — Update user by ID
+- `DELETE /api/users/[id]`    — Delete user by ID
+- `GET    /api/roles`         — List all roles
+- `POST   /api/roles`         — Create a new role
+- `GET    /api/roles/[id]`    — Get role by ID
+- `PUT    /api/roles/[id]`    — Update role by ID
+- `DELETE /api/roles/[id]`    — Delete role by ID
+- `GET    /api/health`        — Health check
 
-## Deploy on Vercel
+### 4. Running Tests
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Tests are run with Jest and automatically manage test database dependencies using Docker Compose.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+To run all tests:
+
+```bash
+npm test
+```
+
+or
+
+```bash
+npx jest --runInBand --detectOpenHandles --forceExit
+```
+
+This will:
+- Start the test database in Docker
+- Wait for migrations to complete
+- Run all Jest tests in `__tests__/`
+- Cleanly shut down and remove the test containers
+
+### 5. Stopping the Database
+
+To stop and remove the database containers:
+
+```bash
+docker compose -f docker/database/docker-compose.yml down -v
+```
+
+## Notes
+- The test setup/teardown scripts ensure a clean environment for every test run.
+- All database tables are created in the `nextjs` schema.
+- The API uses the `pg` library and sets the search path to `nextjs` automatically.
+
+---
+
+For more details, see the code in `src/pages/api/` and the test files in `__tests__/`.
