@@ -2,13 +2,13 @@ const pool = require('./src/pages/api/db.cjs');
 const { execSync } = require('child_process');
 
 // Suppress all unhandledRejection and uncaughtException events during teardown
-process.on('unhandledRejection', () => {});
-process.on('uncaughtException', () => {});
+process.on('unhandledRejection', () => { });
+process.on('uncaughtException', () => { });
 
 module.exports = async () => {
   // Gracefully close pg pool and suppress unhandled error events
   try {
-    pool.on('error', () => {}); // Suppress unhandled error events
+    pool.on('error', () => { }); // Suppress unhandled error events
     await pool.end();
   } catch (e) {
     // ignore errors

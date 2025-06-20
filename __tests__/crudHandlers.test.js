@@ -18,17 +18,17 @@ function makeTestServer(handler, url = '/') {
       }
       // Patch res with .status, .json, .end
       let statusCode = 200;
-      res.status = function(code) {
+      res.status = function (code) {
         statusCode = code;
         res.statusCode = code;
         return res;
       };
-      res.json = function(obj) {
+      res.json = function (obj) {
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(obj));
       };
       const origEnd = res.end;
-      res.end = function(...args) {
+      res.end = function (...args) {
         res.statusCode = statusCode;
         origEnd.apply(res, args);
       };
