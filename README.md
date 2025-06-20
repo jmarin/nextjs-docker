@@ -31,7 +31,18 @@ npm run dev
 
 The app will be available at http://localhost:3000
 
-### 3. API Endpoints
+### 3. Admin UI
+
+A modern admin UI for managing users and roles is available at:
+
+```
+http://localhost:3000/admin
+```
+
+- Add, view, and delete users and roles with a beautiful React interface.
+- All changes are reflected live using the REST API.
+
+### 4. API Endpoints
 
 - `GET    /api/users`         — List all users
 - `POST   /api/users`         — Create a new user
@@ -45,7 +56,7 @@ The app will be available at http://localhost:3000
 - `DELETE /api/roles/[id]`    — Delete role by ID
 - `GET    /api/health`        — Health check
 
-### 4. Running Tests
+### 5. Running Tests
 
 Tests are run with Jest and automatically manage test database dependencies using Docker Compose.
 
@@ -67,7 +78,7 @@ This will:
 - Run all Jest tests in `__tests__/`
 - Cleanly shut down and remove the test containers
 
-### 5. Stopping the Database
+### 6. Stopping the Database
 
 To stop and remove the database containers:
 
@@ -82,4 +93,4 @@ docker compose -f docker/database/docker-compose.yml down -v
 
 ---
 
-For more details, see the code in `src/pages/api/` and the test files in `__tests__/`.
+For more details, see the code in `src/pages/api/`, the admin UI in `src/pages/admin.js`, and the test files in `__tests__/`.
