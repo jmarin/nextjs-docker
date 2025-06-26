@@ -43,7 +43,9 @@ describe('Users API', () => {
     server = makeTestServer(usersHandler);
     server.listen(4001);
   });
-  afterAll(() => server.close());
+  afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
+  });
 
   it('GET /api/users should return array', async () => {
     const res = await request(server).get('/');
@@ -92,7 +94,9 @@ describe('User by ID API', () => {
     userId = res.body.id;
     usersServer.close();
   });
-  afterAll(() => server.close());
+  afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
+  });
 
   it('GET /api/users/[id] should return user', async () => {
     const res = await request(server).get(`/?id=${userId}`);
@@ -124,7 +128,9 @@ describe('Roles API', () => {
     server = makeTestServer(rolesHandler);
     server.listen(4003);
   });
-  afterAll(() => server.close());
+  afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
+  });
 
   it('GET /api/roles should return array', async () => {
     const res = await request(server).get('/');
@@ -163,7 +169,9 @@ describe('Role by ID API', () => {
     roleId = res.body.id;
     rolesServer.close();
   });
-  afterAll(() => server.close());
+  afterAll(async () => {
+    await new Promise((resolve) => server.close(resolve));
+  });
 
   it('GET /api/roles/[id] should return role', async () => {
     const res = await request(server).get(`/?id=${roleId}`);
