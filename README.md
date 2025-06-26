@@ -78,7 +78,22 @@ This will:
 - Run all Jest tests in `__tests__/`
 - Cleanly shut down and remove the test containers
 
-### 6. Stopping the Database
+### 6. Running E2E Tests (Playwright)
+
+End-to-end (E2E) tests are written with Playwright and cover the admin UI and API integration.
+
+To run all E2E tests:
+
+```bash
+npx playwright install  # Only needed once to install browsers
+npx playwright test
+```
+
+- Make sure the app and database are running (see steps 1 and 2 above).
+- E2E tests are located in the `e2e/` directory.
+- See `e2e/README.md` for more details and advanced usage.
+
+### 7. Stopping the Database
 
 To stop and remove the database containers:
 
