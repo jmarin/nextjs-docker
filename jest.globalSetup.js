@@ -2,7 +2,7 @@ const { execSync } = require('child_process');
 
 function waitForPostgresReady() {
   const maxAttempts = 20;
-  const delay = 1000; // 1 second
+  const delay = 10000; // 1 second
   for (let i = 0; i < maxAttempts; i++) {
     try {
       execSync(

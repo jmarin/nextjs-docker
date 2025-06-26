@@ -11,6 +11,8 @@ export default function AdminPanel() {
     const [roleForm, setRoleForm] = useState({ name: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [deletingUserId, setDeletingUserId] = useState(null);
+    const [deletingRoleId, setDeletingRoleId] = useState(null);
 
     useEffect(() => {
         refresh();
@@ -65,14 +67,20 @@ export default function AdminPanel() {
     }
 
     async function deleteUser(id) {
+        setDeletingUserId(id);
         setLoading(true);
         await fetch(`/api/users/${id}`, { method: 'DELETE' });
+        setDeletingUserId(null);
+        setLoading(false);
         refresh();
     }
 
     async function deleteRole(id) {
+        setDeletingRoleId(id);
         setLoading(true);
         await fetch(`/api/roles/${id}`, { method: 'DELETE' });
+        setDeletingRoleId(null);
+        setLoading(false);
         refresh();
     }
 
@@ -80,8 +88,29 @@ export default function AdminPanel() {
         <div style={{ fontFamily: 'system-ui, sans-serif', maxWidth: 900, margin: '2rem auto', background: '#fff', borderRadius: 12, boxShadow: '0 2px 16px #0001', padding: 32 }}>
             <h1 style={{ textAlign: 'center', color: '#2d3748' }}>Admin Panel</h1>
             {error && <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>}
-            <div style={{ display: 'flex', gap: 40, flexWrap: 'wrap', justifyContent: 'space-between' }}>
-                <section style={{ flex: 1, minWidth: 320 }}>
+            <div style={{ display: 'flex', gap: 40, flexWrap: 'wrap', justifyContent: 'space-between', flexDirection: 'column' }}>
+                <section style={{ flex: 1, minWidth: 320, pointerEvents: 'auto' }}>
+                    <h2 style={{ color: '#4a5568' }}>Roles</h2>
+                    <form onSubmit={handleRoleSubmit} style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <input required placeholder="Role name" value={roleForm.name} onChange={e => setRoleForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} />
+                        <button type="submit" disabled={loading} style={buttonStyle}>Add Role</button>
+                    </form>
+                    <table style={tableStyle}>
+                        <thead>
+                            <tr><th>ID</th><th>Name</th><th></th></tr>
+                        </thead>
+                        <tbody>
+                            {roles.map(r => (
+                                <tr key={r.id}>
+                                    <td>{r.id}</td>
+                                    <td>{r.name}</td>
+                                    <td><button onClick={() => deleteRole(r.id)} style={deleteButtonStyle} disabled={deletingRoleId === r.id}>{deletingRoleId === r.id ? 'Deleting...' : 'Delete'}</button></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </section>
+                <section style={{ flex: 1, minWidth: 320, pointerEvents: 'auto' }}>
                     <h2 style={{ color: '#4a5568' }}>Users</h2>
                     <form onSubmit={handleUserSubmit} style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 8 }}>
                         <input required placeholder="Username" value={form.username} onChange={e => setForm(f => ({ ...f, username: e.target.value }))} style={inputStyle} />
@@ -104,28 +133,7 @@ export default function AdminPanel() {
                                     <td>{u.username}</td>
                                     <td>{u.email}</td>
                                     <td>{roles.find(r => r.id === u.role)?.name || u.role}</td>
-                                    <td><button onClick={() => deleteUser(u.id)} style={deleteButtonStyle} disabled={loading}>Delete</button></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </section>
-                <section style={{ flex: 1, minWidth: 320 }}>
-                    <h2 style={{ color: '#4a5568' }}>Roles</h2>
-                    <form onSubmit={handleRoleSubmit} style={{ marginBottom: 24, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        <input required placeholder="Role name" value={roleForm.name} onChange={e => setRoleForm(f => ({ ...f, name: e.target.value }))} style={inputStyle} />
-                        <button type="submit" disabled={loading} style={buttonStyle}>Add Role</button>
-                    </form>
-                    <table style={tableStyle}>
-                        <thead>
-                            <tr><th>ID</th><th>Name</th><th></th></tr>
-                        </thead>
-                        <tbody>
-                            {roles.map(r => (
-                                <tr key={r.id}>
-                                    <td>{r.id}</td>
-                                    <td>{r.name}</td>
-                                    <td><button onClick={() => deleteRole(r.id)} style={deleteButtonStyle} disabled={loading}>Delete</button></td>
+                                    <td><button onClick={() => deleteUser(u.id)} style={deleteButtonStyle} disabled={deletingUserId === u.id}>{deletingUserId === u.id ? 'Deleting...' : 'Delete'}</button></td>
                                 </tr>
                             ))}
                         </tbody>
@@ -157,6 +165,8 @@ const deleteButtonStyle = {
     ...buttonStyle,
     background: 'linear-gradient(90deg,#f56565,#e53e3e)',
     marginTop: 0,
+    zIndex: 9999, // Ensure delete button is always on top
+    position: 'relative',
 };
 const tableStyle = {
     width: '100%',
@@ -165,4 +175,5 @@ const tableStyle = {
     borderRadius: 8,
     overflow: 'hidden',
     marginBottom: 16,
+    pointerEvents: 'auto', // Ensure table and children are always interactive
 };
