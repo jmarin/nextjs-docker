@@ -52,7 +52,7 @@ describe('Users API', () => {
   });
 
   it('POST /api/users should create user', async () => {
-    const user = { username: 'jestuser', password: 'pw', email: 'jest@example.com', role: 2 };
+    const user = { username: 'jestuser', password: 'pw1234', email: 'jest@example.com', role: 2 };
     const res = await request(server).post('/').send(user);
     expect(res.statusCode).toBe(201);
     expect(res.body.username).toBe(user.username);
@@ -67,7 +67,7 @@ describe('User by ID API', () => {
     // Create a user to test with
     const usersServer = makeTestServer(usersHandler);
     usersServer.listen(4002);
-    const res = await request(usersServer).post('/').send({ username: 'jestid', password: 'pw', email: 'id@example.com', role: 2 });
+    const res = await request(usersServer).post('/').send({ username: 'jestid', password: 'pw1234', email: 'id@example.com', role: 2 });
     userId = res.body.id;
     usersServer.close();
   });
@@ -80,7 +80,7 @@ describe('User by ID API', () => {
   });
 
   it('PUT /api/users/[id] should update user', async () => {
-    const res = await request(server).put(`/?id=${userId}`).send({ username: 'jestid2', password: 'pw', email: 'id2@example.com', role: 2 });
+    const res = await request(server).put(`/?id=${userId}`).send({ username: 'jestid2', password: 'pw1234', email: 'id2@example.com', role: 2 });
     expect(res.statusCode).toBe(200);
     expect(res.body.username).toBe('jestid2');
   });
