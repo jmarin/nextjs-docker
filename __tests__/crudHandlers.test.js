@@ -57,6 +57,27 @@ describe('Users API', () => {
     expect(res.statusCode).toBe(201);
     expect(res.body.username).toBe(user.username);
   });
+
+  it('POST /api/users should reject invalid user (short password)', async () => {
+    const user = { username: 'baduser', password: 'pw', email: 'bad@example.com', role: 2 };
+    const res = await request(server).post('/').send(user);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toMatch(/password/);
+  });
+
+  it('POST /api/users should reject invalid user (missing email)', async () => {
+    const user = { username: 'baduser', password: 'pw1234', role: 2 };
+    const res = await request(server).post('/').send(user);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toMatch(/email/);
+  });
+
+  it('POST /api/users should reject invalid user (bad role type)', async () => {
+    const user = { username: 'baduser', password: 'pw1234', email: 'bad@example.com', role: 'notanumber' };
+    const res = await request(server).post('/').send(user);
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toMatch(/role/);
+  });
 });
 
 describe('User by ID API', () => {
@@ -85,6 +106,12 @@ describe('User by ID API', () => {
     expect(res.body.username).toBe('jestid2');
   });
 
+  it('PUT /api/users/[id] should reject invalid update (short username)', async () => {
+    const res = await request(server).put(`/?id=${userId}`).send({ username: 'a', password: 'pw1234', email: 'id2@example.com', role: 2 });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toMatch(/username/);
+  });
+
   it('DELETE /api/users/[id] should delete user', async () => {
     const res = await request(server).delete(`/?id=${userId}`);
     expect([204, 200]).toContain(res.statusCode);
@@ -109,6 +136,18 @@ describe('Roles API', () => {
     const res = await request(server).post('/').send({ name: 'jestrole' });
     expect(res.statusCode).toBe(201);
     expect(res.body.name).toBe('jestrole');
+  });
+
+  it('POST /api/roles should reject invalid role (missing name)', async () => {
+    const res = await request(server).post('/').send({});
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toMatch(/name/);
+  });
+
+  it('POST /api/roles should reject invalid role (short name)', async () => {
+    const res = await request(server).post('/').send({ name: 'a' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toMatch(/name/);
   });
 });
 
@@ -136,6 +175,12 @@ describe('Role by ID API', () => {
     const res = await request(server).put(`/?id=${roleId}`).send({ name: 'jestroleid2' });
     expect(res.statusCode).toBe(200);
     expect(res.body.name).toBe('jestroleid2');
+  });
+
+  it('PUT /api/roles/[id] should reject invalid update (empty name)', async () => {
+    const res = await request(server).put(`/?id=${roleId}`).send({ name: '' });
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toMatch(/name/);
   });
 
   it('DELETE /api/roles/[id] should delete role', async () => {
