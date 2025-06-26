@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "joi": "^17.13.3",
